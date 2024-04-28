@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\State;
 use App\Models\Employee;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -57,23 +58,39 @@ class EmployeeResource extends Resource
                         ->placeholder('Select the department')
                         ->relationship('department', 'name')
                         ->required(),
+                    // make dependent dropdowns from the country, state, and city tables
                     Select::make('country_id')
                         ->label('Country')
                         ->placeholder('Select the country')
                         ->relationship('country', 'name')
+                        ->reactive()
+                        ->afterStateUpdated(fn (callable $set) => $set('state_id', null))
                         ->required(),
                     Select::make('state_id')
                         ->label('State')
                         ->placeholder('Select the state')
-                        ->relationship('state', 'name')
+                        ->options(function (callable $get) {
+                            $country = $get('country_id');
+                            if (!$country) {
+                                return State::all()->pluck('name', 'id');
+                            }
+                            return State::where('country_id', $country)->get()->pluck('name', 'id');
+                        })
+                        ->reactive()
+                        ->afterStateUpdated(fn (callable $set) => $set('city_id', null))
                         ->required(),
                     Select::make('city_id')
                         ->label('City')
                         ->placeholder('Select the city')
-                        ->relationship('city', 'name')
+                        ->options(function (callable $get) {
+                            $state = $get('state_id');
+                            if (!$state) {
+                                return State::all()->pluck('name', 'id');
+                            }
+                            return State::find($state)->cities->pluck('name', 'id');
+                        })
                         ->required(),
-                    
-                ])
+                ]),
             ]);
     }
 
