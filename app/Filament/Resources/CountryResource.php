@@ -9,18 +9,26 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CountryResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CountryResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\CountryResource\RelationManagers\CityRelationManager;
+use App\Filament\Resources\CountryResource\RelationManagers\CitiesRelationManager;
+use App\Filament\Resources\CountryResource\RelationManagers\StatesRelationManager;
+use App\Filament\Resources\CountryResource\RelationManagers\EmployeesRelationManager;
+use App\Filament\Resources\CountryResource\RelationManagers\DepartmentsRelationManager;
 
 class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationGroup = 'System Management';
+    public static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -43,7 +51,6 @@ class CountryResource extends Resource
     {
         return $table
             ->columns([
-                // for id 
                 TextColumn::make('id')
                     ->searchable()
                     ->sortable(),
@@ -73,7 +80,7 @@ class CountryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            StatesRelationManager::class,
         ];
     }
 
