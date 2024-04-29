@@ -20,7 +20,10 @@ class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationGroup = 'System Management';
+    public static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
@@ -43,7 +46,6 @@ class CountryResource extends Resource
     {
         return $table
             ->columns([
-                // for id 
                 TextColumn::make('id')
                     ->searchable()
                     ->sortable(),
